@@ -13,7 +13,7 @@
 
    WHY?
    ====
-   Gives us another way to monitor dhcp leases. 
+   Gives us another way to monitor dhcp leases.
 
    ENVIRONMENT VARIABLES
    =====================
@@ -51,10 +51,9 @@
        - del
      - arp
        - arp-add	
-       - old		???
-       - del		???
+       - arp-del
      - relay-snoop	??? or is this relay(arg), where arg='snoop'?
-     - tftp		??? 
+     - tftp		??? not yet tested
 
    dnsmasq CONFIGURATION
    =====================
@@ -80,7 +79,7 @@ dbinsert = nil		-- preprepared call to write to a database
 
 
 local function myenv()	-- For testing. How do we retrieve the contents of the environment variables?
-	a = (os.getenv("DNSMASQ_TIME_REMAINING") or "blank")
+	a = (os.getenv("DNSMASQ_TIME_REMAINING") or "blank")		-- Help. Always blank.
 	return a
 end
 
@@ -114,7 +113,7 @@ end
 local function output(mystring)
 	print(mystring)			-- In production, I see little point in this. Left for testing.
 	file:write(mystring)		-- We write our data to a standard file...
-	file:flush()			-- ... but it doesn't flush to file until after shutdown! :-(
+	file:flush()
 
 	DBI.Do(dbh, "INSERT INTO table1(a) VALUES ('" .. mystring .. "');")	-- ... or a SQLite3 file ...
 	-- dbinsert:execute(mystring)	-- ... or a database (if using postgreSQL)
@@ -124,10 +123,10 @@ local function output(mystring)
 	print(cmd .. "\n")			-- Edit, and change 'print' to 'os.execute'
 
 	-- What else might we like to do?
+	-- Possibly look at a hook for collectd.
 end
 
 function shutdown()
-	-- This is not being called. Why?
 	file:write("Stopping dnsmasq lua script..!\n==============================\n")
 	file:close()
 	-- dbinsert:close()		-- only needed if we have a prepared SQL insert function.
@@ -156,14 +155,6 @@ function arp(a, b, c)	-- expected, but not tested: Action (string), Args (table)
 	c = type(c)
 	local line = "-- arp " .. a .. " / " .. tabletostring(b) .. "\n" .. c .. "\n"
 	output(line)
-end
-
-function arp_del()
-	output("-- arp-del. \n")
-end
-
-function arp_old()
-	output("-- arp-old. \n")
 end
 
 function tftp(a, b, c)	-- expected, but not tested: Action, table{destination addr, file name, file size}

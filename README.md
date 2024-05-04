@@ -1,6 +1,8 @@
 # dnsmasq-lua
 dnsmasq monitoring using lua.
-<<<<<<< HEAD
-=======
 
->>>>>>> 74a5561 (update)
+Currently, this script is simply a boilerplate example of how we might want to
+use the lua script option within dnsmasq to collect and store information
+suitable for separate analysis. Created mainly because I couldn't find much 
+documentation elsewhere.
+
